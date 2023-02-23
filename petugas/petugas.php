@@ -17,8 +17,6 @@
 
         if($data){
             header("location: index.php?page=petugas");
-        } else {
-            echo mysqli_error();
         }
     }
 ?>

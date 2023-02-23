@@ -7,8 +7,6 @@
 
         if($data){
             $db->alertMsg("Data berhasil disimpan", 'index.php?page=kelas');
-        } else {
-            echo mysqli_error();
         }
     }
 
@@ -17,8 +15,6 @@
 
         if($data){
             header("location: index.php?page=kelas");
-        } else {
-            echo mysqli_error();
         }
     }
 ?>

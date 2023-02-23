@@ -37,7 +37,12 @@
         <div class="content-wrapper">
             <?php 
                 $page = isset($_GET['page']) ? $_GET['page'] : '';
-                
+                $notAllowed = ['data', 'edit', 'kelas', 'petugas', 'proses', 'siswa', 'spp'];
+
+                if($_SESSION['level'] == 'petugas' && in_array($page, $notAllowed)){
+                    $db->alertMsg('Anda tidak memiliki akses', '?page=dashboard');
+                }
+
                 switch($page){
                     case 'dashboard' :
                         include 'dashboard.php';

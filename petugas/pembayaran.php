@@ -4,8 +4,6 @@
 
         if($data){
             header("location: index.php?page=pembayaran");
-        } else {
-            echo mysqli_error();
         }
     }
 ?>
