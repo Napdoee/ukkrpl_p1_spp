@@ -51,8 +51,8 @@
                     case 'petugas' :
                         include "petugas.php";
                         break;
-                    case 'spp' :
-                        include "spp.php";
+                    case 'tranksaksi' :
+                        include "tranksaksi.php";
                         break;
                     case 'pembayaran' :
                         include "pembayaran.php";
@@ -62,6 +62,9 @@
                         break;
                     case 'data' :
                         include "data.php";
+                        break;
+                    case 'spp' :
+                        include "spp.php";
                         break;
                     default : 
                         include "dashboard.php";

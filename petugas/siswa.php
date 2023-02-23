@@ -1,12 +1,17 @@
 <?php 
     if(isset($_POST['simpan'])) {
-        $data = $db->insertSiswa($_POST['nisn'], $_POST['nis'], $_POST['nama'], 
-        $_POST['spp'], $_POST['kelas'], $_POST['alamat'], $_POST['notelp']);
+        $nisn = $_POST['nisn'];
+        $nis = $_POST['nis'];
+        $nama = $_POST['nama'];
+        $spp = $_POST['spp'];
+        $kelas = $_POST['kelas'];
+        $alamat = $_POST['alamat'];
+        $notelp = $_POST['notelp'];
+
+        $data = $db->insertSiswa($nisn, $nis, $nama, $spp, $kelas, MD5($nis), $alamat, $notelp);
 
         if($data){
             $db->alertMsg("Data berhasil disimpan", 'index.php?page=siswa');
-        } else {
-            echo mysqli_error();
         }
     }
 
@@ -15,8 +20,6 @@
 
         if($data){
             header("location: index.php?page=siswa");
-        } else {
-            echo mysqli_error();
         }
     }
 ?>
@@ -102,14 +105,14 @@
                         <div class="col-6">
                             <div class="form-group">
                                 <label for="nisn">NISN</label>
-                                <input type="text" class="form-control" name="nisn" id="nisn"
+                                <input type="number" class="form-control" name="nisn" id="nisn"
                                     placeholder="Masukkan NISN" required>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-group">
                                 <label for="nis">NIS</label>
-                                <input type="text" class="form-control" name="nis" id="nis" placeholder="Masukkan NIS"
+                                <input type="number" class="form-control" name="nis" id="nis" placeholder="Masukkan NIS"
                                     required>
                             </div>
                         </div>
@@ -150,7 +153,7 @@
                     </div>
                     <div class="form-group">
                         <label for="notelp">No. Telp</label>
-                        <input type="text" class="form-control" name="notelp" id="notelp"
+                        <input type="number" class="form-control" name="notelp" id="notelp"
                             placeholder="Masukkan No. Telp" required>
                     </div>
             </div>

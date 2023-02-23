@@ -1,6 +1,19 @@
 <?php 
+    if(isset($_POST['simpan'])) {
+        $nama = $_POST['tahun'];
+        $kompetensi = $_POST['nominal'];
+
+        $data = $db->insertSPP($nama, $kompetensi);
+
+        if($data){
+            $db->alertMsg("Data berhasil disimpan", 'index.php?page=spp');
+        } else {
+            echo mysqli_error();
+        }
+    }
+
     if(isset($_POST['delete'])){
-        $data = $db->delete('pembayaran', 'id_pembayaran', $_POST['id_pembayaran']);
+        $data = $db->delete('spp', 'id_spp', $_POST['id_spp']);
 
         if($data){
             header("location: index.php?page=spp");
@@ -11,70 +24,94 @@
 ?>
 <div class="content-header">
     <div class="container">
-        <h1 class="mb-2">Data Pembayaran</h1>
-        <?php if($_SESSION['level'] == 'admin') : ?>
+        <h1 class="mb-2">Data SPP</h1>
         <div class="row">
             <div class="col-12">
-                <a href="?page=data&laporan=pembayaran" class="btn btn-success">
-                    <i class="fas fa-folder"></i> Laporan
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-default">
+                    <i class="fas fa-plus"></i>
+                    Tambah
+                </button>
+                <a href="?page=data&laporan=spp" class="btn btn-success">
+                    <i class="fas fa-folder"></i>
+                    Laporan
                 </a>
             </div>
         </div>
-        <?php endif; ?>
     </div>
 </div>
 <div class="content">
     <div class="container">
         <div class="card">
             <div class="card-body">
-                <table id="example2" class="table table-bordered align-middle text-nowrap">
+                <table id="example2" class="table table-bordered align-middle">
                     <thead>
                         <tr>
                             <th class="text-center" width="5%">#</th>
-                            <th>Petugas</th>
-                            <th>Siswa</th>
-                            <th>Tanggal</th>
-                            <th>Bulan</th>
+                            <th class="text-center" width="5%">ID</th>
                             <th>Tahun</th>
-                            <th>Jumlah</th>
-                            <?php if($_SESSION['level'] == 'admin') : ?>
+                            <th>Nominal</th>
                             <th class="text-center">Aksi</th>
-                            <?php endif; ?>
                         </tr>
                     </thead>
                     <tbody>
                         <?php 
-                        $query = $db->showData('pembayaran', 'nisn');
+                        $query = $db->showData('spp', 'tahun');
                         $no = 1;
                         foreach($query as $data) :
-                            $petugas = $db->detailData('petugas', 'id_petugas', $data['id_petugas']);
-                            $siswa = $db->detailData('siswa', 'nisn', $data['nisn']);
                         ?>
                         <tr>
                             <td class="text-center"><?= $no++ ?></td>
-                            <td><?= $petugas['nama_petugas'] ?></td>
-                            <td><?= $data['nisn']." - ".$siswa['nama'] ?></td>
-                            <td><?= $data['tgl_bayar'] ?></td>
-                            <td><?= $data['bulan_dibayar'] ?></td>
-                            <td><?= $data['tahun_dibayar'] ?></td>
-                            <td>Rp. <?= number_format($data['jumlah_bayar'],2,',','.') ?></td>
-                            <?php if($_SESSION['level'] == 'admin') : ?>
-                            <td class="text-center">
-                                <div class="d-flex justify-content-around">
+                            <td class="text-center"><?= $data['id_spp'] ?></td>
+                            <td><?= $data['tahun'] ?></td>
+                            <td>Rp. <?= number_format($data['nominal']) ?></td>
+                            <td width="20%">
+                                <div class="d-flex justify-content-center">
+                                    <a class="btn btn-warning mr-2" href="?page=edit&act=spp&id=<?= $data['id_spp'] ?>">
+                                        <i class="fas fa-pen"></i>
+                                    </a>
                                     <form action="" method="POST">
-                                        <input type="hidden" name="id_pembayaran" value="<?= $data['id_pembayaran'] ?>">
+                                        <input type="hidden" name="id_spp" value="<?= $data['id_spp'] ?>">
                                         <button name="delete" type="submit" class="btn btn-danger"
-                                            onclick="confirm('Apakah anda yakin ingin menghapus data ini?')">
+                                            onclick="confirm('Apakah anda yakin ingin menghapus data ini? <?= $data['tahun'] ?>')">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
                                 </div>
                             </td>
-                            <?php endif; ?>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tambah SPP</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="POST">
+                    <div class="form-group">
+                        <label for="tahun">Tahun</label>
+                        <input type="number" class="form-control" name="tahun" id="tahun"
+                            placeholder="Masukkan nama spp" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nominal">Nominal</label>
+                        <input type="number" class="form-control" name="nominal" id="nominal"
+                            placeholder="Masukkan Nominal" required>
+                    </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                <button type="submit" name="simpan" class="btn btn-primary">Tambah</button>
+                </form>
             </div>
         </div>
     </div>

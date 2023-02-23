@@ -20,6 +20,8 @@
                         <li><a href="?page=siswa" class="dropdown-item">Data Siswa </a></li>
                         <li class="dropdown-divider"></li>
                         <li><a href="?page=kelas" class="dropdown-item">Data Kelas </a></li>
+                        <li class="dropdown-divider"></li>
+                        <li><a href="?page=spp" class="dropdown-item">Data SPP </a></li>
                     </ul>
                 </li>
         </div>
@@ -28,10 +30,10 @@
         <!-- Right Items -->
         <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
             <li class="nav-item">
-                <a href="?page=pembayaran" class="nav-link">Pembayaran SPP</a>
+                <a href="?page=tranksaksi" class="nav-link">Pembayaran SPP</a>
             </li>
             <li class="nav-item">
-                <a href="?page=spp" class="nav-link">History SPP</a>
+                <a href="?page=pembayaran" class="nav-link">History SPP</a>
             </li>
             <li class="nav-item">
                 <a href="../logout.php" class="nav-link">Logout</a>

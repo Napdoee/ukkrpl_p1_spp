@@ -3,15 +3,12 @@
         $nama = $_POST['nama_petugas'];
         $level = $_POST['level'];
         $username = $_POST['username'];
-        $password = $_POST['password'];
-        $password = md5($password);
+        $password = MD5($_POST['password']);
 
         $data = $db->insertPetugas($nama, $username, $password, $level);
 
         if($data){
             $db->alertMsg("Data berhasil disimpan", 'index.php?page=petugas');
-        } else {
-            echo mysqli_error();
         }
     }
 

@@ -1,17 +1,9 @@
 <?php 
-    if(isset($_POST['bayar'])){
-        $petugas = $_SESSION['userId'];
-        $siswa = $_POST['nama'];
-        $tgl_dibayar = $_POST['tgl_bayar'];
-        $bulan = $_POST['bulan'];
-        $id_spp = $_POST['tahun'];
-        $tahun = $db->detailData('spp', 'id_spp', $id_spp)['tahun'];
-        $jumlah = $_POST['jumlah'];
-
-        $data = $db->insertPembayaran($petugas, $siswa, $tgl_dibayar, $bulan, $tahun, $id_spp, $jumlah);
+    if(isset($_POST['delete'])){
+        $data = $db->delete('pembayaran', 'id_pembayaran', $_POST['id_pembayaran']);
 
         if($data){
-            $db->alertMsg("Data berhasil disimpan", '?page=spp');
+            header("location: index.php?page=pembayaran");
         } else {
             echo mysqli_error();
         }
@@ -19,76 +11,75 @@
 ?>
 <div class="content-header">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
-            <h1 class="mb-2">Pembayaran SPP</h1>
+        <h1 class="mb-2">Data Pembayaran</h1>
+        <?php if($_SESSION['level'] == 'admin') : ?>
+        <div class="row">
+            <div class="col-12">
+                <a href="?page=data&laporan=pembayaran" class="btn btn-success">
+                    <i class="fas fa-folder"></i> Laporan
+                </a>
+            </div>
         </div>
+        <?php endif; ?>
     </div>
 </div>
 <div class="content">
     <div class="container">
         <div class="card">
             <div class="card-body">
-                <form action="" method="POST">
-                    <div class="form-group">
-                        <label for="nama">Siswa</label>
-                        <select name="nama" id="nama" class="form-control select2" required>
-                            <option value="">Pilih Siswa</option>
-                            <?php foreach($db->showData("siswa", 'nama') as $val): ?>
-                            <option value="<?= $val['nisn'] ?>"><?= $val['nisn']." - ".$val['nama'] ?>
-                            </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="tgl_bayar">Tanggal Pembayaran</label>
-                        <input type="date" class="form-control" name="tgl_bayar" id="tgl_bayar"
-                            value="<?= $data['tgl_bayar'] ?>" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="bulan">Bulan Dibayar</label>
-                        <select name="bulan" id="bulan" class="custom-select" required>
-                            <option value="">Pilih Bulan</option>
-                            <option value="Januari">Januari</option>
-                            <option value="Februari">Februari</option>
-                            <option value="Maret">Maret</option>
-                            <option value="April">April</option>
-                            <option value="Mei">Mei</option>
-                            <option value="Juni">Juni</option>
-                            <option value="Juli">Juli</option>
-                            <option value="September">September</option>
-                            <option value="Oktober">Oktober</option>
-                            <option value="November">November</option>
-                            <option value="Desember">Desember</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="tahun">Tahun SPP</label>
-                        <select name="tahun" id="tahun" class="form-control" required>
-                            <option value="">Pilih Tahun</option>
-                            <?php foreach($db->showData("spp", 'tahun') as $val): ?>
-                            <option value="<?= $val['id_spp'] ?>"><?= $val['tahun'] ?>
-                            </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="jumlah">Jumlah Bayar</label>
-                        <input type="number" name="jumlah" id="jumlah" class="form-control" placeholder="Jumlah bayar"
-                            required>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" name="bayar" class="btn btn-primary">
-                            Simpan
-                        </button>
-                    </div>
-                </form>
+                <table id="example2" class="table table-bordered align-middle text-nowrap">
+                    <thead>
+                        <tr>
+                            <th class="text-center" width="5%">#</th>
+                            <th>Petugas</th>
+                            <th>Siswa</th>
+                            <th>Tanggal</th>
+                            <th>Bulan</th>
+                            <th>Tahun</th>
+                            <th>Jumlah</th>
+                            <?php if($_SESSION['level'] == 'admin') : ?>
+                            <th class="text-center">Aksi</th>
+                            <?php endif; ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                        $query = $db->showData('pembayaran', 'nisn');
+                        $no = 1;
+                        foreach($query as $data) :
+                            $petugas = $db->detailData('petugas', 'id_petugas', $data['id_petugas']);
+                            $siswa = $db->detailData('siswa', 'nisn', $data['nisn']);
+                        ?>
+                        <tr>
+                            <td class="text-center"><?= $no++ ?></td>
+                            <td><?= $petugas['nama_petugas'] ?></td>
+                            <td><?= $data['nisn']." - ".$siswa['nama'] ?></td>
+                            <td><?= $data['tgl_bayar'] ?></td>
+                            <td><?= $data['bulan_dibayar'] ?></td>
+                            <td><?= $data['tahun_dibayar'] ?></td>
+                            <td>Rp. <?= number_format($data['jumlah_bayar'],2,',','.') ?></td>
+                            <?php if($_SESSION['level'] == 'admin') : ?>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-around">
+                                    <a class="btn btn-warning mr-2"
+                                        href="?page=edit&act=pembayaran&id=<?= $data['id_pembayaran'] ?>">
+                                        <i class="fas fa-pen"></i>
+                                    </a>
+                                    <form action="" method="POST">
+                                        <input type="hidden" name="id_pembayaran" value="<?= $data['id_pembayaran'] ?>">
+                                        <button name="delete" type="submit" class="btn btn-danger"
+                                            onclick="confirm('Apakah anda yakin ingin menghapus data ini?')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                            <?php endif; ?>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
-<script src="../assets/plugins/select2/js/select2.full.min.js"></script>
-<script>
-$(function() {
-    $('.select2').select2()
-});
-</script>

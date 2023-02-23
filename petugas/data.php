@@ -85,6 +85,31 @@
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+                <?php elseif($laporan == 'spp') : ?>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th class="text-center" width="5%">#</th>
+                            <th class="text-center">ID</th>
+                            <th>Tahun</th>
+                            <th>Nominal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                        $query = $db->showData('spp', 'tahun');
+                        $no = 1;
+                        foreach($query as $data) :
+                        ?>
+                        <tr>
+                            <td class="text-center"><?= $no++ ?></td>
+                            <td class="text-center"><?= $data['id_spp'] ?></td>
+                            <td><?= $data['tahun'] ?></td>
+                            <td><?= $data['nominal'] ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
                 <?php elseif($laporan == 'siswa') : ?>
                 <table class="table table-striped">
                     <thead>

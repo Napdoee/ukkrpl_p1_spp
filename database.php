@@ -73,9 +73,12 @@ class Database
         return $query;
     }
     function detailData($tabel, $pk, $id){
-        $query = $this->query("SELECT * FROM $tabel WHERE $pk='$id'")[0];
-
-        return $query;
+        $query = $this->query("SELECT * FROM $tabel WHERE $pk='$id'");
+        if(!$query){
+            return false;
+        } else {
+            return $query[0];
+        }
     }
     
     
@@ -83,15 +86,8 @@ class Database
     Function Insert Data
     **/
     function insertPetugas($nama, $username, $password, $level){
-        $dataUser = mysqli_query($this->connect, "SELECT * FROM petugas");
-        while($data = mysqli_fetch_array($dataUser)){
-            if($data['nama_petugas'] == $nama){
-               return $this->alertMsg('Nama tersebut telah digunakan', 'data-petugas.php');
-            }
-        }
-
         $query = mysqli_query($this->connect, "INSERT INTO petugas 
-        VALUES('', '$nama', '$password', '$level')");
+        VALUES('', '$nama', '$password', '$username', '$level')");
 
         return $query;
     }
@@ -102,10 +98,17 @@ class Database
 
         return $query;
     }
+    
+    function insertSPP($tahun, $nominal){
+        $query = mysqli_query($this->connect, "INSERT INTO spp 
+        VALUES('', '$tahun', '$nominal')");
 
-    function insertSiswa($nisn, $nis, $nama, $spp, $kelas, $alamat, $notelp ){
+        return $query;
+    }
+
+    function insertSiswa($nisn, $nis, $nama, $spp, $kelas, $password, $alamat, $notelp ){
         $query = mysqli_query($this->connect, "INSERT INTO siswa 
-        VALUES('$nisn', '$nis', '$nama', '$spp', '$kelas', NULL, '$alamat', '$notelp')");
+        VALUES('$nisn', '$nis', '$nama', '$spp', '$kelas', '$password', '$alamat', '$notelp')");
 
         return $query;
     }
@@ -139,8 +142,21 @@ class Database
         return $query;
     }
 
-    function editSiswa($id, $nama, $alamat, $notelp ){
+    function editSPP($id, $tahun, $nominal){
+        $query = mysqli_query($this->connect, "UPDATE spp SET 
+        tahun   = '$tahun', 
+        nominal = '$nominal'
+        WHERE id_spp = $id");
+
+        return $query;
+    }
+
+    function editSiswa($id, $nisn, $nis, $nama, $id_spp, $id_kelas, $alamat, $notelp ){
         $query = mysqli_query($this->connect, "UPDATE siswa SET
+        nisn     = '$nisn',
+        nis      = '$nis',
+        id_spp   = '$id_spp',
+        id_kelas = '$id_kelas',
         nama     = '$nama',
         alamat   = '$alamat',
         no_telp  = '$notelp'
@@ -149,7 +165,28 @@ class Database
         return $query;
     }
     
+    function editPembayaran($id, $petugas, $siswa, $tgl_bayar, $bulan_dibayar, $tahun_dibayar, $id_spp, $jumlah_bayar){
+        $query = mysqli_query($this->connect, "UPDATE pembayaran SET
+        id_petugas      = '$petugas', 
+        nisn            = '$siswa', 
+        tgl_bayar       = '$tgl_bayar', 
+        bulan_dibayar   = '$bulan_dibayar', 
+        tahun_dibayar   = '$tahun_dibayar', 
+        id_spp          = $id_spp, 
+        jumlah_bayar    = '$jumlah_bayar'
+        WHERE id_pembayaran = $id");
+
+        return $query;
+    }
     
+    function changePass($id, $password){
+        $query = mysqli_query($this->connect, "UPDATE siswa SET
+        password = '$password'
+        WHERE nisn = '$id'") or die(mysqli_error());
+
+        return $query;
+    }
+
     /**
     Function Delete Data
     **/

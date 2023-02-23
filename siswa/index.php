@@ -10,6 +10,27 @@
     if($_SESSION['level'] != 'siswa'){
        return $db->alertMsg("Anda harus masuk sebagai siswa untuk mengakses halaman!", '../logout.php');
     }
+
+    if(isset($_POST['changePass'])){
+        $oldPass = $_POST['oldPassword'];
+        $pass = $_POST['pass'];
+        $pass2 = $_POST['pass2'];
+
+        $confirmPass = $db->detailData('siswa', 'password', MD5($oldPass));
+        if($confirmPass){
+            if($pass == $pass2){
+                $query = $db->changePass($_SESSION['userId'], MD5($pass));
+        
+                if($query){
+                    $db->alertMsg('Password berhasil diubah', 'index.php');
+                }
+            } else {
+                $db->alertMsg('Terjadi kesalahan konfirmasi password', 'index.php');
+            }
+        } else {
+            $db->alertMsg('Password lama tidak sama!', 'index.php');
+        }
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,6 +60,11 @@
                     </ul>
                 </div>
                 <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+                    <li class="nav-item">
+                        <a data-toggle="modal" data-target="#modal-default" href="" class="nav-link">
+                            Ganti Password
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a href="../logout.php" class="nav-link">
                             Logout
@@ -77,12 +103,14 @@
                                 </thead>
                                 <tbody>
                                     <?php 
-                                    $query = $db->query("SELECT * FROM pembayaran WHERE nisn = {$_SESSION['userId']}");
-                                    $no = 1;
-                                    if(!empty($query) > 0) :
-                                    foreach($query as $data) :
-                                        $petugas = $db->detailData('petugas', 'id_petugas', $data['id_petugas']);
-                                    ?>
+                                        $query = $db->query("SELECT * FROM pembayaran p INNER JOIN spp s WHERE p.nisn = {$_SESSION['userId']} AND p.id_spp = s.id_spp;");
+                                        $no = 1;
+                                        if(!empty($query) > 0) :
+                                        foreach($query as $data) :
+                                            $petugas = $db->detailData('petugas', 'id_petugas', $data['id_petugas']);
+                                            $totalByr = $db->query("SELECT TotalPembayaran ($data[nisn]) AS TotalPembayaran;")[0]['TotalPembayaran'];
+                                            $sisaByr = $data['nominal'] - $totalByr;
+                                        ?>
                                     <tr>
                                         <td class="text-center"><?= $no++ ?></td>
                                         <td><?= $petugas['nama_petugas'] ?></td>
@@ -93,13 +121,53 @@
                                     </tr>
                                     <?php  endforeach; else : ?>
                                     <tr>
-                                        <td colspan='5' align="center">Belum ada history pembayaran</td>
+                                        <td colspan='6' align="center">Belum ada history pembayaran</td>
                                     </tr>
                                     <?php endif;?>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                    <?php if(!empty($query) > 0) : ?>
+                    <div class="row">
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-info elevation-1"><i class="fas fa-user-tie"></i></span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Total Pembayaran</span>
+                                    <span class="info-box-number">
+                                        Rp. <?= number_format($totalByr,2,',','.') ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-info elevation-1"><i class="fas fa-user-tie"></i></span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Sisa Pembayaran</span>
+                                    <span class="info-box-number">
+                                        Rp. <?= number_format($sisaByr,2,',','.') ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-info elevation-1"><i class="fas fa-user-tie"></i></span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Jumlah Pembayaran</span>
+                                    <span class="info-box-number">
+                                        Rp. <?= number_format($data['nominal'],2,',','.') ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -109,6 +177,42 @@
             </div>
             <strong>Latihan UKK | SPP APP Paket 1</strong>
         </footer>
+    </div>
+    <div class="modal fade" id="modal-default">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Ganti Password</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="POST">
+                        <div class="form-group">
+                            <label for="oldPassword">Password Lama</label>
+                            <input type="password" class="form-control" name="oldPassword" id="oldPassword"
+                                placeholder="Masukkan Password Lama" required>
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                            <label for="pass">Password Baru</label>
+                            <input type="password" class="form-control" name="pass" id="pass"
+                                placeholder="Masukkan Password Baru" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pass2">Ulangi Password</label>
+                            <input type="password" class="form-control" name="pass2" id="pass2"
+                                placeholder="Ulangi Password" required>
+                        </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                    <button type="submit" name="changePass" class="btn btn-primary">Konfirmasi</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="../assets/plugins/jquery/jquery.min.js"></script>
     <script src="../assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
