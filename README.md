@@ -15,7 +15,7 @@ Sistem dibangun menggunakan PHP berbasis berorentiasi objek dengan menggunakan d
 #### 2. Tampilan dengan Admin LTE 3
 - Menginstal template [Admin LTE 3](https://github.com/ColorlibHQ/AdminLTE/releases)
 - Buat folder baru dengan nama `assets` di directory file
-- Pindahkan file `dist` dan `plugins` dari **Admin LTE 3**
+- Pindahkan file `dist` dan `plugins` dari **Admin LTE 3** ke folder `assets`
 
 #### 3. Jalankan project dengan *Apache* dan *MySQL*
 
