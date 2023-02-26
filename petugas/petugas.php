@@ -16,12 +16,12 @@
         $data = $db->delete('petugas', 'id_petugas', $_POST['id_petugas']);
 
         if($data){
-            header("location: index.php?page=petugas");
+            echo "<script>window.location='?page=pembayaran'</script>";
         }
     }
 ?>
 <div class="content-header">
-    <div class="container">
+    <div class="container-fluid">
         <h1 class="mb-2">Data Petugas</h1>
         <div class="row">
             <div class="col-12">
@@ -37,7 +37,7 @@
     </div>
 </div>
 <div class="content">
-    <div class="container">
+    <div class="container-fluid">
         <div class="card">
             <div class="card-body">
                 <table id="example2" class="table table-bordered align-middle">
@@ -61,7 +61,7 @@
                             <td class="text-center"><?= $data['id_petugas'] ?></td>
                             <td><?= $data['nama_petugas'] ?></td>
                             <td><?= $data['level'] ?></td>
-                            <td width="20%">
+                            <td width="15%">
                                 <div class="d-flex justify-content-center">
                                     <a class="btn btn-warning mr-2"
                                         href="?page=edit&act=petugas&id=<?= $data['id_petugas'] ?>">

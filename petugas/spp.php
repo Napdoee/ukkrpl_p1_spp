@@ -14,12 +14,12 @@
         $data = $db->delete('spp', 'id_spp', $_POST['id_spp']);
 
         if($data){
-            header("location: index.php?page=spp");
+            echo "<script>window.location='?page=pembayaran'</script>";
         }
     }
 ?>
 <div class="content-header">
-    <div class="container">
+    <div class="container-fluid">
         <h1 class="mb-2">Data SPP</h1>
         <div class="row">
             <div class="col-12">
@@ -36,7 +36,7 @@
     </div>
 </div>
 <div class="content">
-    <div class="container">
+    <div class="container-fluid">
         <div class="card">
             <div class="card-body">
                 <table id="example2" class="table table-bordered align-middle">
@@ -60,7 +60,7 @@
                             <td class="text-center"><?= $data['id_spp'] ?></td>
                             <td><?= $data['tahun'] ?></td>
                             <td>Rp. <?= number_format($data['nominal']) ?></td>
-                            <td width="20%">
+                            <td width="15%">
                                 <div class="d-flex justify-content-center">
                                     <a class="btn btn-warning mr-2" href="?page=edit&act=spp&id=<?= $data['id_spp'] ?>">
                                         <i class="fas fa-pen"></i>

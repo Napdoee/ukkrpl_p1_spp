@@ -123,11 +123,12 @@ class Database
     /**
     Function Update Data
     * */
-    function editPetugas($id, $nama, $user, $pass){
+    function editPetugas($id, $nama, $user, $pass, $level){
         $query = mysqli_query($this->connect, "UPDATE petugas SET 
         nama_petugas = '$nama', 
+        level        = '$level',
         username     = '$user',
-        password     = '$pass' 
+        password     = '$pass'
         WHERE id_petugas = $id");
 
         return $query;
@@ -179,12 +180,26 @@ class Database
         return $query;
     }
     
-    function changePass($id, $password){
-        $query = mysqli_query($this->connect, "UPDATE siswa SET
-        password = '$password'
-        WHERE nisn = '$id'") or die(mysqli_error());
-
-        return $query;
+    function changePass($user, $id, $password){
+        switch($user){
+            case 'siswa' :
+                $query = mysqli_query($this->connect, "UPDATE siswa SET
+                password = '$password'
+                WHERE nisn = '$id'") or die(mysqli_error());
+        
+                return $query;
+                break;
+            case 'petugas' :
+                $query = mysqli_query($this->connect, "UPDATE petugas SET
+                password = '$password'
+                WHERE id_petugas = '$id'") or die(mysqli_error());
+        
+                return $query;
+                break;
+            default :
+                return false;
+                break;
+        }
     }
 
     /**

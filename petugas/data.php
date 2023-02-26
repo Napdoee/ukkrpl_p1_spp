@@ -7,7 +7,7 @@
     }
 ?>
 <div class="content-header">
-    <div class="container">
+    <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center">
             <button onclick="cetak()" class="btn btn-success" style="margin-left: 5px;">
                 <i class="fas fa-print"></i>
@@ -21,7 +21,7 @@
     </div>
 </div>
 <div class="content">
-    <div class="container">
+    <div class="container-fluid">
         <div class="card">
             <div class="card-header">
                 <h3>
@@ -117,14 +117,16 @@
                             <th class="text-center" width="5%">#</th>
                             <th>NISN</th>
                             <th>NIS</th>
-                            <th>Nama Kelas</th>
+                            <th>Nama</th>
+                            <th>Kelas</th>
                             <th>Alamat</th>
                             <th>No. Telp</th>
+                            <th>Tahun SPP</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php 
-                        $query = $db->showData('siswa', 'nama');
+                        $query = $db->query("SELECT * FROM siswa s, kelas k, spp p WHERE s.id_kelas = k.id_kelas AND s.id_spp = p.id_spp");
                         $no = 1;
                         foreach($query as $data) :
                         ?>
@@ -133,8 +135,10 @@
                             <td><?= $data['nisn'] ?></td>
                             <td><?= $data['nis'] ?></td>
                             <td><?= $data['nama'] ?></td>
+                            <td><?= $data['nama_kelas'] ?></td>
                             <td><?= $data['alamat'] ?></td>
                             <td><?= $data['no_telp'] ?></td>
+                            <td><?= $data['tahun'] ?></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>

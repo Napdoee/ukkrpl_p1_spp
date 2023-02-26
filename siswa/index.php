@@ -19,7 +19,7 @@
         $confirmPass = $db->detailData('siswa', 'password', MD5($oldPass));
         if($confirmPass){
             if($pass == $pass2){
-                $query = $db->changePass($_SESSION['userId'], MD5($pass));
+                $query = $db->changePass('siswa', $_SESSION['userId'], MD5($pass));
         
                 if($query){
                     $db->alertMsg('Password berhasil diubah', 'index.php');

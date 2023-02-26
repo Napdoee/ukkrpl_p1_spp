@@ -34,7 +34,7 @@
     }
 ?>
 <div class="content-header">
-    <div class="container">
+    <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="mb-2">Edit Data <?= ucwords($_GET['act']) ?></h1>
             <a class="btn btn-default" href="?page=<?= $_GET['act'] ?>">
@@ -45,7 +45,7 @@
     </div>
 </div>
 <div class="content">
-    <div class="container">
+    <div class="container-fluid">
         <div class="card">
             <div class="card-body">
                 <form action="proses.php?act=<?= $_GET['act'] ?>&id=<?= $_GET['id'] ?>" method="POST">

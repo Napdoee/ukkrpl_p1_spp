@@ -1,14 +1,16 @@
 <?php 
     if(isset($_POST['bayar'])){
         $petugas = $_SESSION['userId'];
-        $siswa = $_POST['nama'];
+        $nisn = $_POST['nisn'];
         $tgl_dibayar = $_POST['tgl_bayar'];
         $bulan = $_POST['bulan'];
-        $id_spp = $_POST['tahun'];
-        $tahun = $db->detailData('spp', 'id_spp', $id_spp)['tahun'];
         $jumlah = $_POST['jumlah'];
+        $siswa = $db->detailData('siswa', 'nisn', $nisn);
+        $id_spp = $siswa['id_spp'];
+        $tahun = $db->detailData('spp', 'id_spp', $id_spp)['tahun'];
 
-        $data = $db->insertPembayaran($petugas, $siswa, $tgl_dibayar, $bulan, $tahun, $id_spp, $jumlah);
+
+        $data = $db->insertPembayaran($petugas, $nisn, $tgl_dibayar, $bulan, $tahun, $id_spp, $jumlah);
 
         if($data){
             $db->alertMsg("Data berhasil disimpan", '?page=pembayaran');
@@ -16,7 +18,7 @@
     }
 ?>
 <div class="content-header">
-    <div class="container">
+    <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="mb-2">Pembayaran SPP</h1>
         </div>
@@ -28,10 +30,10 @@
             <div class="card-body">
                 <form action="" method="POST">
                     <div class="form-group">
-                        <label for="nama">Siswa</label>
-                        <select name="nama" id="nama" class="form-control select2" required>
+                        <label for="nisn">Siswa</label>
+                        <select name="nisn" id="nisn" class="form-control select2" required>
                             <option value="">Pilih Siswa</option>
-                            <?php foreach($db->showData("siswa", 'nama') as $val): ?>
+                            <?php foreach($db->showData("siswa", 'nisn') as $val): ?>
                             <option value="<?= $val['nisn'] ?>"><?= $val['nisn']." - ".$val['nama'] ?>
                             </option>
                             <?php endforeach; ?>
@@ -59,7 +61,7 @@
                             <option value="Desember">Desember</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="tahun">Tahun SPP</label>
                         <select name="tahun" id="tahun" class="form-control" required>
                             <option value="">Pilih Tahun</option>
@@ -68,7 +70,7 @@
                             </option>
                             <?php endforeach; ?>
                         </select>
-                    </div>
+                    </div> -->
                     <div class="form-group">
                         <label for="jumlah">Jumlah Bayar</label>
                         <input type="number" name="jumlah" id="jumlah" class="form-control" placeholder="Jumlah bayar"

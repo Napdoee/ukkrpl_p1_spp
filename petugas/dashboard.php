@@ -1,5 +1,5 @@
 <div class="content-header">
-    <div class="container">
+    <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1 class="m-0"> Selamat Datang <b><?=  $_SESSION['username'] ?></b></h1>
@@ -8,7 +8,7 @@
     </div>
 </div>
 <div class="content">
-    <div class="container">
+    <div class="container-fluid">
         <?php if($_SESSION['level'] == 'admin') : ?>
         <div class="row">
             <div class="col-md-3 col-sm-6 col-12">
@@ -67,10 +67,10 @@
                     <span class="info-box-icon bg-success"><i class="fas fa-book"></i></span>
 
                     <div class="info-box-content">
-                        <span class="info-box-text">Nominal Pembayaran</span>
+                        <span class="info-box-text">Jumlah Pembayaran</span>
                         <span class="info-box-number">
                             <?php $nominal = $db->query("SELECT SUM(jumlah_bayar) as Total FROM pembayaran;")[0]['Total']; 
-                            echo number_format($nominal,2,',','.'); ?>
+                            echo "Rp. ".number_format($nominal,2,',','.'); ?>
                         </span>
                     </div>
                 </div>

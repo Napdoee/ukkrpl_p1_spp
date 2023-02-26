@@ -3,12 +3,12 @@
         $data = $db->delete('pembayaran', 'id_pembayaran', $_POST['id_pembayaran']);
 
         if($data){
-            header("location: index.php?page=pembayaran");
+            echo "<script>window.location='?page=pembayaran'</script>";
         }
     }
 ?>
 <div class="content-header">
-    <div class="container">
+    <div class="container-fluid">
         <h1 class="mb-2">Data Pembayaran</h1>
         <?php if($_SESSION['level'] == 'admin') : ?>
         <div class="row">
@@ -22,7 +22,7 @@
     </div>
 </div>
 <div class="content">
-    <div class="container">
+    <div class="container-fluid">
         <div class="card">
             <div class="card-body">
                 <table id="example2" class="table table-bordered align-middle text-nowrap">
@@ -57,8 +57,8 @@
                             <td><?= $data['tahun_dibayar'] ?></td>
                             <td>Rp. <?= number_format($data['jumlah_bayar'],2,',','.') ?></td>
                             <?php if($_SESSION['level'] == 'admin') : ?>
-                            <td class="text-center">
-                                <div class="d-flex justify-content-around">
+                            <td class="text-center" width="15%">
+                                <div class="d-flex justify-content-center">
                                     <a class="btn btn-warning mr-2"
                                         href="?page=edit&act=pembayaran&id=<?= $data['id_pembayaran'] ?>">
                                         <i class="fas fa-pen"></i>

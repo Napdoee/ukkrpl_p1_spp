@@ -19,12 +19,12 @@
         $data = $db->delete('siswa', 'nisn', $_POST['nisn']);
 
         if($data){
-            header("location: index.php?page=siswa");
+            echo "<script>window.location='?page=pembayaran'</script>";
         }
     }
 ?>
 <div class="content-header">
-    <div class="container">
+    <div class="container-fluid">
         <h1 class="mb-2">Data Siswa</h1>
         <div class="row">
             <div class="col-12">
@@ -40,7 +40,7 @@
     </div>
 </div>
 <div class="content">
-    <div class="container">
+    <div class="container-fluid">
         <div class="card">
             <div class="card-body">
                 <table id="example2" class="table table-bordered align-middle">
@@ -50,14 +50,16 @@
                             <th>NISN</th>
                             <th>NIS</th>
                             <th>Nama</th>
+                            <th>Kelas</th>
                             <th>Alamat</th>
                             <th>No. Telp</th>
+                            <th>Tahun SPP</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php 
-                        $query = $db->showData('siswa', 'nama');
+                        $query = $db->query("SELECT * FROM siswa s, kelas k, spp p WHERE s.id_kelas = k.id_kelas AND s.id_spp = p.id_spp");
                         $no = 1;
                         foreach($query as $data) :
                         ?>
@@ -66,9 +68,11 @@
                             <td><?= $data['nisn'] ?></td>
                             <td><?= $data['nis'] ?></td>
                             <td><?= $data['nama'] ?></td>
+                            <td><?= $data['nama_kelas'] ?></td>
                             <td><?= $data['alamat'] ?></td>
                             <td><?= $data['no_telp'] ?></td>
-                            <td class="text-center" width="20%">
+                            <td><?= $data['tahun'] ?></td>
+                            <td class="text-center" width="15%">
                                 <div class="d-flex justify-content-center">
                                     <a class="btn btn-warning mr-2" href="?page=edit&act=siswa&id=<?= $data['nisn'] ?>">
                                         <i class="fas fa-pen"></i>
