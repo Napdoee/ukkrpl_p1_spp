@@ -24,7 +24,8 @@ Sistem dibangun menggunakan PHP berbasis berorentiasi objek dengan menggunakan d
 
 
 #### Halaman Siswa
-![SPP APP](https://i.imgur.com/Klb5701.png)
+![SPP APP](https://i.imgur.com/MtNTQGU.png)
 
-#### Halaman Admin
-![SPP APP](https://i.imgur.com/FwG5Aoh.png)
+#### Halaman Petugas
+![SPP APP](https://i.imgur.com/Uci3wy9.png)
+![SPP APP](https://i.imgur.com/iDvPs4F.png)
