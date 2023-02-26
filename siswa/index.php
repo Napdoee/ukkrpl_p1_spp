@@ -90,42 +90,44 @@
                             <h3 class="card-title">Data Pembayaran</h3>
                         </div>
                         <div class="card-body">
-                            <table id="example2" class="table table-bordered align-middle text-nowrap">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center" width="5%">#</th>
-                                        <th>Petugas</th>
-                                        <th>Tanggal Pembayaran</th>
-                                        <th>Bulan Dibayar</th>
-                                        <th>Tahun Dibayar</th>
-                                        <th>Jumlah Pembayaran</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php 
-                                        $query = $db->query("SELECT * FROM pembayaran p INNER JOIN spp s WHERE p.nisn = {$_SESSION['userId']} AND p.id_spp = s.id_spp;");
-                                        $no = 1;
-                                        if(!empty($query) > 0) :
-                                        foreach($query as $data) :
-                                            $petugas = $db->detailData('petugas', 'id_petugas', $data['id_petugas']);
-                                            $totalByr = $db->query("SELECT TotalPembayaran ($data[nisn]) AS TotalPembayaran;")[0]['TotalPembayaran'];
-                                            $sisaByr = $data['nominal'] - $totalByr;
-                                        ?>
-                                    <tr>
-                                        <td class="text-center"><?= $no++ ?></td>
-                                        <td><?= $petugas['nama_petugas'] ?></td>
-                                        <td><?= $data['tgl_bayar'] ?></td>
-                                        <td><?= $data['bulan_dibayar'] ?></td>
-                                        <td><?= $data['tahun_dibayar'] ?></td>
-                                        <td>Rp. <?= number_format($data['jumlah_bayar'],2,',','.') ?></td>
-                                    </tr>
-                                    <?php  endforeach; else : ?>
-                                    <tr>
-                                        <td colspan='6' align="center">Belum ada history pembayaran</td>
-                                    </tr>
-                                    <?php endif;?>
-                                </tbody>
-                            </table>
+                            <div class="table-responsive">
+                                <table id="example2" class="table table-bordered align-middle text-nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center" width="5%">#</th>
+                                            <th>Petugas</th>
+                                            <th>Tanggal Pembayaran</th>
+                                            <th>Bulan Dibayar</th>
+                                            <th>Tahun Dibayar</th>
+                                            <th>Jumlah Pembayaran</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php 
+                                            $query = $db->query("SELECT * FROM pembayaran p INNER JOIN spp s WHERE p.nisn = {$_SESSION['userId']} AND p.id_spp = s.id_spp;");
+                                            $no = 1;
+                                            if(!empty($query) > 0) :
+                                            foreach($query as $data) :
+                                                $petugas = $db->detailData('petugas', 'id_petugas', $data['id_petugas']);
+                                                $totalByr = $db->query("SELECT TotalPembayaran ($data[nisn]) AS TotalPembayaran;")[0]['TotalPembayaran'];
+                                                $sisaByr = $data['nominal'] - $totalByr;
+                                            ?>
+                                        <tr>
+                                            <td class="text-center"><?= $no++ ?></td>
+                                            <td><?= $petugas['nama_petugas'] ?></td>
+                                            <td><?= $data['tgl_bayar'] ?></td>
+                                            <td><?= $data['bulan_dibayar'] ?></td>
+                                            <td><?= $data['tahun_dibayar'] ?></td>
+                                            <td>Rp. <?= number_format($data['jumlah_bayar'],2,',','.') ?></td>
+                                        </tr>
+                                        <?php  endforeach; else : ?>
+                                        <tr>
+                                            <td colspan='6' align="center">Belum ada history pembayaran</td>
+                                        </tr>
+                                        <?php endif;?>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                     <?php if(!empty($query) > 0) : ?>

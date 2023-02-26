@@ -66,7 +66,7 @@
                                     <form action="" method="POST">
                                         <input type="hidden" name="id_pembayaran" value="<?= $data['id_pembayaran'] ?>">
                                         <button name="delete" type="submit" class="btn btn-danger"
-                                            onclick="confirm('Apakah anda yakin ingin menghapus data ini?')">
+                                            onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>

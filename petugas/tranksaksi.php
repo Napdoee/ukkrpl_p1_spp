@@ -13,7 +13,7 @@
         $data = $db->insertPembayaran($petugas, $nisn, $tgl_dibayar, $bulan, $tahun, $id_spp, $jumlah);
 
         if($data){
-            $db->alertMsg("Data berhasil disimpan", '?page=pembayaran');
+            $db->alertMsg("Data berhasil disimpan", '?page=tranksaksi');
         }
     }
 ?>

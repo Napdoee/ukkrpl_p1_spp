@@ -14,7 +14,7 @@
         $data = $db->delete('kelas', 'id_kelas', $_POST['id_kelas']);
 
         if($data){
-            echo "<script>window.location='?page=pembayaran'</script>";
+            echo "<script>window.location='?page=kelas'</script>";
         }
     }
 ?>
@@ -69,7 +69,7 @@
                                     <form action="" method="POST">
                                         <input type="hidden" name="id_kelas" value="<?= $data['id_kelas'] ?>">
                                         <button name="delete" type="submit" class="btn btn-danger"
-                                            onclick="confirm('Apakah anda yakin ingin menghapus data ini? <?= $data['nama_kelas'] ?>')">
+                                            onclick="return confirm('Apakah anda yakin ingin menghapus data ini? <?= $data['nama_kelas'] ?>')">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
