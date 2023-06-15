@@ -1,36 +1,36 @@
-<?php 
-    session_start();
-    include "../database.php";
-    $db = new Database();
+<?php
+session_start();
+include "../database.php";
+$db = new Database();
 
-    if(!isset($_SESSION['status'])){
-        return header("location: ../index.php");
-    }
+if (!isset($_SESSION['status'])) {
+    return header("location: ../index.php");
+}
 
-    if($_SESSION['level'] != 'siswa'){
-       return $db->alertMsg("Anda harus masuk sebagai siswa untuk mengakses halaman!", '../logout.php');
-    }
+if ($_SESSION['level'] != 'siswa') {
+    return $db->alertMsg("Anda harus masuk sebagai siswa untuk mengakses halaman!", '../logout.php');
+}
 
-    if(isset($_POST['changePass'])){
-        $oldPass = $_POST['oldPassword'];
-        $pass = $_POST['pass'];
-        $pass2 = $_POST['pass2'];
+if (isset($_POST['changePass'])) {
+    $oldPass = $_POST['oldPassword'];
+    $pass = $_POST['pass'];
+    $pass2 = $_POST['pass2'];
 
-        $confirmPass = $db->detailData('siswa', 'password', MD5($oldPass));
-        if($confirmPass){
-            if($pass == $pass2){
-                $query = $db->changePass('siswa', $_SESSION['userId'], MD5($pass));
-        
-                if($query){
-                    $db->alertMsg('Password berhasil diubah', 'index.php');
-                }
-            } else {
-                $db->alertMsg('Terjadi kesalahan konfirmasi password', 'index.php');
+    $confirmPass = $db->detailData('siswa', 'password', MD5($oldPass));
+    if ($confirmPass) {
+        if ($pass == $pass2) {
+            $query = $db->changePass('siswa', $_SESSION['userId'], MD5($pass));
+
+            if ($query) {
+                $db->alertMsg('Password berhasil diubah', 'index.php');
             }
         } else {
-            $db->alertMsg('Password lama tidak sama!', 'index.php');
+            $db->alertMsg('Terjadi kesalahan konfirmasi password', 'index.php');
         }
+    } else {
+        $db->alertMsg('Password lama tidak sama!', 'index.php');
     }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,8 +41,8 @@
     <title>Dashboard Siswa</title>
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <link rel="stylesheet" href="../assets/plugins/fontawesome-free/css/all.min.css">
-    <link rel="stylesheet" href="../assets/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="../../AdminLTE/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../../AdminLTE/dist/css/adminlte.min.css">
 </head>
 
 <body class="hold-transition layout-top-nav">
@@ -103,34 +103,40 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php 
-                                            $query = $db->query("SELECT * FROM pembayaran p INNER JOIN spp s WHERE p.nisn = {$_SESSION['userId']} AND p.id_spp = s.id_spp;");
-                                            $no = 1;
-                                            if(!empty($query) > 0) :
-                                            foreach($query as $data) :
-                                                $petugas = $db->detailData('petugas', 'id_petugas', $data['id_petugas']);
-                                                $totalByr = $db->query("SELECT TotalPembayaran ($data[nisn]) AS TotalPembayaran;")[0]['TotalPembayaran'];
-                                                $sisaByr = $data['nominal'] - $totalByr;
-                                            ?>
+                                        <?php
+                                        $query = $db->query("SELECT pembayaran.tgl_bayar, pembayaran.bulan_dibayar, 
+                                        pembayaran.tahun_dibayar, pembayaran.jumlah_bayar, spp.nominal, petugas.nama_petugas
+                                        FROM pembayaran, petugas, spp WHERE pembayaran.nisn = $_SESSION[userId] 
+                                        AND pembayaran.id_petugas = petugas.id_petugas GROUP BY pembayaran.bulan_dibayar");
+                                        $no = 1;
+                                        if (!empty($query)) :
+                                            $dataPembayaran = $db->query("SELECT SUM(p.jumlah_bayar) as TotalBayar, 
+                                            (spp.nominal - SUM(p.jumlah_bayar)) as SisaBayar FROM pembayaran p, spp 
+                                            WHERE p.nisn = $_SESSION[userId] AND p.id_spp = spp.id_spp")[0];
+                                            foreach ($query as $data) :
+                                                $statusPembayaran = $dataPembayaran['TotalBayar'] >= $data['nominal'] ? true : false;
+                                                $sisaBayar = $dataPembayaran['TotalBayar'] <= 0 ? $data['nominal'] : $dataPembayaran['SisaBayar'];
+                                        ?>
                                         <tr>
                                             <td class="text-center"><?= $no++ ?></td>
-                                            <td><?= $petugas['nama_petugas'] ?></td>
+                                            <td><?= $data['nama_petugas'] ?></td>
                                             <td><?= $data['tgl_bayar'] ?></td>
                                             <td><?= $data['bulan_dibayar'] ?></td>
                                             <td><?= $data['tahun_dibayar'] ?></td>
-                                            <td>Rp. <?= number_format($data['jumlah_bayar'],2,',','.') ?></td>
+                                            <td>Rp. <?= number_format($data['jumlah_bayar'], 2, ',', '.') ?></td>
                                         </tr>
-                                        <?php  endforeach; else : ?>
+                                        <?php endforeach;
+                                        else : ?>
                                         <tr>
                                             <td colspan='6' align="center">Belum ada history pembayaran</td>
                                         </tr>
-                                        <?php endif;?>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-                    <?php if(!empty($query) > 0) : ?>
+                    <?php if (!empty($query) > 0) : ?>
                     <div class="row">
                         <div class="col-12 col-sm-6 col-md-3">
                             <div class="info-box">
@@ -139,7 +145,7 @@
                                 <div class="info-box-content">
                                     <span class="info-box-text">Total Pembayaran</span>
                                     <span class="info-box-number">
-                                        Rp. <?= number_format($totalByr,2,',','.') ?>
+                                        Rp. <?= number_format($dataPembayaran['TotalBayar'], 2, ',', '.') ?>
                                     </span>
                                 </div>
                             </div>
@@ -151,7 +157,7 @@
                                 <div class="info-box-content">
                                     <span class="info-box-text">Sisa Pembayaran</span>
                                     <span class="info-box-number">
-                                        Rp. <?= number_format($sisaByr,2,',','.') ?>
+                                        Rp. <?= number_format($dataPembayaran['SisaBayar'], 2, ',', '.') ?>
                                     </span>
                                 </div>
                             </div>
@@ -163,7 +169,19 @@
                                 <div class="info-box-content">
                                     <span class="info-box-text">Jumlah Pembayaran</span>
                                     <span class="info-box-number">
-                                        Rp. <?= number_format($data['nominal'],2,',','.') ?>
+                                        Rp. <?= number_format($data['nominal'], 2, ',', '.') ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-info elevation-1"><i class="fas fa-user-tie"></i></span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Status Pembayaran</span>
+                                    <span class="info-box-number">
+                                        <?= $statusPembayaran ? "LUNAS" : "BELUM LUNAS" ?>
                                     </span>
                                 </div>
                             </div>
@@ -216,8 +234,8 @@
             </div>
         </div>
     </div>
-    <script src="../assets/plugins/jquery/jquery.min.js"></script>
-    <script src="../assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../AdminLTE/plugins/jquery/jquery.min.js"></script>
+    <script src="../../AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

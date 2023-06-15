@@ -64,5 +64,3 @@ if(isset($_GET['act']))
         $db->alertMsg('Data berhasil diubah', $loc);
     }
 }
-
-?>

@@ -1,27 +1,27 @@
-<?php 
-    if(isset($_POST['simpan'])) {
-        $nisn = $_POST['nisn'];
-        $nis = $_POST['nis'];
-        $nama = $_POST['nama'];
-        $spp = $_POST['spp'];
-        $kelas = $_POST['kelas'];
-        $alamat = $_POST['alamat'];
-        $notelp = $_POST['notelp'];
+<?php
+if (isset($_POST['simpan'])) {
+    $nisn = $_POST['nisn'];
+    $nis = $_POST['nis'];
+    $nama = $_POST['nama'];
+    $spp = $_POST['spp'];
+    $kelas = $_POST['kelas'];
+    $alamat = $_POST['alamat'];
+    $notelp = $_POST['notelp'];
 
-        $data = $db->insertSiswa($nisn, $nis, $nama, $spp, $kelas, MD5($nis), $alamat, $notelp);
+    $data = $db->insertSiswa($nisn, $nis, $nama, $spp, $kelas, MD5($nisn), $alamat, $notelp);
 
-        if($data){
-            $db->alertMsg("Data berhasil disimpan", 'index.php?page=siswa');
-        }
+    if ($data) {
+        $db->alertMsg("Data berhasil disimpan", 'index.php?page=siswa');
     }
+}
 
-    if(isset($_POST['delete'])){
-        $data = $db->delete('siswa', 'nisn', $_POST['nisn']);
+if (isset($_POST['delete'])) {
+    $data = $db->delete('siswa', 'nisn', $_POST['nisn']);
 
-        if($data){
-            echo "<script>window.location='?page=siswa'</script>";
-        }
+    if ($data) {
+        echo "<script>window.location='?page=siswa'</script>";
     }
+}
 ?>
 <div class="content-header">
     <div class="container-fluid">
@@ -58,10 +58,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php 
+                        <?php
                         $query = $db->query("SELECT * FROM siswa s, kelas k, spp p WHERE s.id_kelas = k.id_kelas AND s.id_spp = p.id_spp");
                         $no = 1;
-                        foreach($query as $data) :
+                        foreach ($query as $data) :
                         ?>
                         <tr>
                             <td class="text-center"><?= $no++ ?></td>
@@ -127,7 +127,7 @@
                                 <label for="kelas">Kelas</label>
                                 <select name="kelas" id="kelas" class="form-control">
                                     <option value="">Pilih Kelas</option>
-                                    <?php foreach($db->showData('kelas', 'nama_kelas') as $val) : ?>
+                                    <?php foreach ($db->showData('kelas', 'nama_kelas') as $val) : ?>
                                     <option value="<?= $val['id_kelas'] ?>"> <?= $val['nama_kelas'] ?></option>
                                     <?php endforeach; ?>
                                 </select>
@@ -138,7 +138,7 @@
                                 <label for="spp">Tahun SPP</label>
                                 <select name="spp" id="spp" class="form-control">
                                     <option value="">Pilih SPP</option>
-                                    <?php foreach($db->showData('spp', 'tahun') as $val) : ?>
+                                    <?php foreach ($db->showData('spp', 'tahun') as $val) : ?>
                                     <option value="<?= $val['id_spp'] ?>"> <?= $val['tahun'] ?></option>
                                     <?php endforeach; ?>
                                 </select>

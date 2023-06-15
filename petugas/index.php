@@ -1,19 +1,19 @@
-<?php 
-    session_start();
-    include "../database.php";
-    $db = new Database();
+<?php
+session_start();
+include "../database.php";
+$db = new Database();
 
-    if(!isset($_SESSION['status'])){
-        return header("location: ../index.php");
-    }
+if (!isset($_SESSION['status'])) {
+    return header("location: ../index.php");
+}
 
-    if($_SESSION['level'] != 'petugas' && $_SESSION['level'] != 'admin'){
-        return $db->alertMsg("Anda harus masuk sebagai petugas untuk mengakses halaman!", '../logout.php');
-    }
+if ($_SESSION['level'] != 'petugas' && $_SESSION['level'] != 'admin') {
+    return $db->alertMsg("Anda harus masuk sebagai petugas untuk mengakses halaman!", '../logout.php');
+}
 
-     if(!isset($_GET['page'])){
-        echo "<script>window.location='?page=dashboard'</script>";
-     }
+if (!isset($_GET['page'])) {
+    echo "<script>window.location='?page=dashboard'</script>";
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,17 +24,17 @@
     <title>Petugas SPP</title>
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <link rel="stylesheet" href="../assets/plugins/fontawesome-free/css/all.min.css">
-    <link rel="stylesheet" href="../assets/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="../../AdminLTE/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../../AdminLTE/dist/css/adminlte.min.css">
     <!-- Select2 -->
-    <link rel="stylesheet" href="../assets/plugins/select2/css/select2.min.css">
-    <link rel="stylesheet" href="../assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <link rel="stylesheet" href="../../AdminLTE/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="../../AdminLTE/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
     <!-- DataTables -->
-    <link rel="stylesheet" href="../assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" />
-    <link rel="stylesheet" href="../assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css" />
-    <link rel="stylesheet" href="../assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css" />
+    <link rel="stylesheet" href="../../AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="../../AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css" />
+    <link rel="stylesheet" href="../../AdminLTE/plugins/datatables-buttons/css/buttons.bootstrap4.min.css" />
     <!-- Theme style -->
-    <link rel="stylesheet" href="../assets/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="../../AdminLTE/dist/css/adminlte.min.css">
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -104,7 +104,7 @@
                                 </p>
                             </a>
                         </li>
-                        <?php if($_SESSION['level'] == 'admin') : ?>
+                        <?php if ($_SESSION['level'] == 'admin') : ?>
                         <li class="nav-item <?= (in_array($_GET['page'], $activePages) ? 'menu-open' : '') ?>">
                             <a href="#" class="nav-link <?= (in_array($_GET['page'], $activePages) ? 'active' : '') ?>">
                                 <i class="nav-icon fas fa-th"></i>
@@ -146,8 +146,8 @@
                         </li>
                         <?php endif; ?>
                         <li class="nav-item">
-                            <a href="?page=tranksaksi"
-                                class="nav-link <?= ($_GET['page'] == 'tranksaksi' ? 'active' : '') ?>">
+                            <a href="?page=pembayaran"
+                                class="nav-link <?= ($_GET['page'] == 'pembayaran' ? 'active' : '') ?>">
                                 <i class="nav-icon fas fa-book"></i>
                                 <p>
                                     Pembayaran SPP
@@ -155,8 +155,8 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="?page=pembayaran"
-                                class="nav-link <?= ($_GET['page'] == 'pembayaran' ? 'active' : '') ?>">
+                            <a href="?page=riwayat"
+                                class="nav-link <?= ($_GET['page'] == 'riwayat' ? 'active' : '') ?>">
                                 <i class="nav-icon fas fa-book"></i>
                                 <p>
                                     Riwayat Pembayaran
@@ -172,48 +172,51 @@
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-            <?php 
-                $page = isset($_GET['page']) ? $_GET['page'] : '';
-                $notAllowed = ['data', 'edit', 'kelas', 'petugas', 'proses', 'siswa', 'spp'];
+            <?php
+            $page = isset($_GET['page']) ? $_GET['page'] : '';
+            $notAllowed = ['data', 'edit', 'kelas', 'petugas', 'proses', 'siswa', 'spp'];
 
-                if($_SESSION['level'] == 'petugas' && in_array($page, $notAllowed)){
-                    $db->alertMsg('Anda tidak memiliki akses', '?page=dashboard');
-                }
+            if ($_SESSION['level'] == 'petugas' && in_array($page, $notAllowed)) {
+                $db->alertMsg('Anda tidak memiliki akses', '?page=dashboard');
+            }
 
-                switch($page){
-                    case 'dashboard' :
-                        include 'dashboard.php';
-                        break;
-                    case 'kelas' :
-                        include "kelas.php";
-                        break;
-                    case 'siswa' :
-                        include "siswa.php";
-                        break;
-                    case 'petugas' :
-                        include "petugas.php";
-                        break;
-                    case 'tranksaksi' :
-                        include "tranksaksi.php";
-                        break;
-                    case 'pembayaran' :
-                        include "pembayaran.php";
-                        break;
-                    case 'edit' :
-                        include "edit.php";
-                        break;
-                    case 'data' :
-                        include "data.php";
-                        break;
-                    case 'spp' :
-                        include "spp.php";
-                        break;
-                    case 'changePass' :
-                        include "password.php";
-                        break;
-                    default : 
-                        include "dashboard.php";
-                }
+            switch ($page) {
+                case 'dashboard':
+                    include 'dashboard.php';
+                    break;
+                case 'kelas':
+                    include "kelas.php";
+                    break;
+                case 'siswa':
+                    include "siswa.php";
+                    break;
+                case 'petugas':
+                    include "petugas.php";
+                    break;
+                case 'tranksaksi':
+                    include "tranksaksi.php";
+                    break;
+                case 'pembayaran':
+                    include "pembayaran.php";
+                    break;
+                case 'riwayat':
+                    include "riwayat.php";
+                    break;
+                case 'edit':
+                    include "edit.php";
+                    break;
+                case 'data':
+                    include "data.php";
+                    break;
+                case 'spp':
+                    include "spp.php";
+                    break;
+                case 'changePass':
+                    include "password.php";
+                    break;
+                default:
+                    include "dashboard.php";
+            }
             ?>
         </div>
         <!-- /.content-wrapper -->
@@ -223,24 +226,24 @@
     <!-- REQUIRED SCRIPTS -->
 
     <!-- jQuery -->
-    <script src="../assets/plugins/jquery/jquery.min.js"></script>
+    <script src="../../AdminLTE/plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap 4 -->
-    <script src="../assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
-    <script src="../assets/dist/js/adminlte.min.js"></script>
-    <script src="../assets/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="../assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script src="../assets/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="../assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-    <script src="../assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="../assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-    <script src="../assets/plugins/jszip/jszip.min.js"></script>
-    <script src="../assets/plugins/pdfmake/pdfmake.min.js"></script>
-    <script src="../assets/plugins/pdfmake/vfs_fonts.js"></script>
-    <script src="../assets/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-    <script src="../assets/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-    <script src="../assets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-    <script src="../assets/plugins/select2/js/select2.full.min.js"></script>
+    <script src="../../AdminLTE/dist/js/adminlte.min.js"></script>
+    <script src="../../AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="../../AdminLTE/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="../../AdminLTE/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="../../AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="../../AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="../../AdminLTE/plugins/jszip/jszip.min.js"></script>
+    <script src="../../AdminLTE/plugins/pdfmake/pdfmake.min.js"></script>
+    <script src="../../AdminLTE/plugins/pdfmake/vfs_fonts.js"></script>
+    <script src="../../AdminLTE/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+    <script src="../../AdminLTE/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+    <script src="../../AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+    <script src="../../AdminLTE/plugins/select2/js/select2.full.min.js"></script>
     <script>
     $(function() {
         $('.select2').select2({

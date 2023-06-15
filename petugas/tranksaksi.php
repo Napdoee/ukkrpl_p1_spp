@@ -1,21 +1,45 @@
-<?php 
-    if(isset($_POST['bayar'])){
-        $petugas = $_SESSION['userId'];
-        $nisn = $_POST['nisn'];
-        $tgl_dibayar = $_POST['tgl_bayar'];
-        $bulan = $_POST['bulan'];
-        $jumlah = $_POST['jumlah'];
-        $siswa = $db->detailData('siswa', 'nisn', $nisn);
-        $id_spp = $siswa['id_spp'];
-        $tahun = $db->detailData('spp', 'id_spp', $id_spp)['tahun'];
+<?php
+if (isset($_GET['nisn'])) {
+    $data = $db->query("SELECT  *, SUM(pembayaran.jumlah_bayar) as TotalBayar, 
+    (spp.nominal - SUM(pembayaran.jumlah_bayar)) as SisaBayar 
+    FROM siswa JOIN pembayaran ON siswa.nisn = pembayaran.nisn 
+    JOIN spp ON siswa.id_spp = spp.id_spp 
+    WHERE siswa.nisn = '$_GET[nisn]'")[0];
+    $statusPembayaran = $data['TotalBayar'] >= $data['nominal'] ? true : false;
 
+    if ($statusPembayaran) return $db->alertMsg("Siswa tersebut telah melakukan pembayaran LUNAS!", "?page=pembayaran");
 
-        $data = $db->insertPembayaran($petugas, $nisn, $tgl_dibayar, $bulan, $tahun, $id_spp, $jumlah);
-
-        if($data){
-            $db->alertMsg("Data berhasil disimpan", '?page=tranksaksi');
-        }
+    $queryBulanPembayaran = $db->query("SELECT bulan_dibayar FROM pembayaran 
+    WHERE nisn = '$_GET[nisn]' AND id_spp = $data[id_spp]
+    GROUP BY bulan_dibayar");
+    $dataBulanPembayaran = [];
+    foreach ($queryBulanPembayaran as $x) {
+        $dataBulanPembayaran[] = $x['bulan_dibayar'];
     }
+
+    $sisaBayar = $data['TotalBayar'] <= 0 ? $data['nominal'] : $data['SisaBayar'];
+} else {
+    echo "<script>window.location='?page=pembayaran'</script>";
+}
+
+if (isset($_POST['bayar'])) {
+    $petugas = $_SESSION['userId'];
+    $nisn = $_GET['nisn'];
+    $id_spp = $data['id_spp'];
+    $tahun = $data['tahun'];
+    $tgl_dibayar = $_POST['tgl_bayar'];
+    $bulan = $_POST['bulan'];
+    $jumlah = $_POST['jumlah'];
+
+    if ($jumlah > $sisaBayar)
+        return $db->alertMsg("Jumlah pembayaran anda melebihi dari sisa pembayaran siswa!!", "?page=tranksaksi&nisn=$data[nisn]");
+
+    $insert = $db->insertPembayaran($petugas, $nisn, $tgl_dibayar, $bulan, $tahun, $id_spp, $jumlah);
+
+    if ($insert) {
+        $db->alertMsg("Data berhasil disimpan", '?page=pembayaran');
+    }
+}
 ?>
 <div class="content-header">
     <div class="container-fluid">
@@ -31,41 +55,31 @@
                 <form action="" method="POST">
                     <div class="form-group">
                         <label for="nisn">Siswa</label>
-                        <select name="nisn" id="nisn" class="form-control select2" required>
-                            <option value="">Pilih Siswa</option>
-                            <?php foreach($db->showData("siswa", 'nisn') as $val): ?>
-                            <option value="<?= $val['nisn'] ?>"><?= $val['nisn']." - ".$val['nama'] ?>
-                            </option>
-                            <?php endforeach; ?>
-                        </select>
+                        <input type="text" class="form-control" id="nisn" value="<?= $data['nama'] ?>" disabled>
                     </div>
                     <div class="form-group">
                         <label for="tgl_bayar">Tanggal Pembayaran</label>
                         <input type="date" class="form-control" name="tgl_bayar" id="tgl_bayar"
-                            value="<?= $data['tgl_bayar'] ?>" required>
+                            value="<?= date('Y-m-d'); ?>" required>
                     </div>
                     <div class="form-group">
                         <label for="bulan">Bulan Dibayar</label>
-                        <select name="bulan" id="bulan" class="custom-select" required>
+                        <select name="bulan" id="bulan" class="form-control select2" required>
                             <option value="">Pilih Bulan</option>
-                            <option value="Januari">Januari</option>
-                            <option value="Februari">Februari</option>
-                            <option value="Maret">Maret</option>
-                            <option value="April">April</option>
-                            <option value="Mei">Mei</option>
-                            <option value="Juni">Juni</option>
-                            <option value="Juli">Juli</option>
-                            <option value="September">September</option>
-                            <option value="Oktober">Oktober</option>
-                            <option value="November">November</option>
-                            <option value="Desember">Desember</option>
+                            <?php
+                            $bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'September', 'Oktober', 'November', 'Desember'];
+                            $result = array_diff($bulan, $dataBulanPembayaran);
+                            foreach ($result as $row) :
+                            ?>
+                            <option value="<?= $row ?>"><?= $row ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <!-- <div class="form-group">
                         <label for="tahun">Tahun SPP</label>
                         <select name="tahun" id="tahun" class="form-control" required>
                             <option value="">Pilih Tahun</option>
-                            <?php foreach($db->showData("spp", 'tahun') as $val): ?>
+                            <?php foreach ($db->showData("spp", 'tahun') as $val) : ?>
                             <option value="<?= $val['id_spp'] ?>"><?= $val['tahun'] ?>
                             </option>
                             <?php endforeach; ?>
@@ -73,8 +87,9 @@
                     </div> -->
                     <div class="form-group">
                         <label for="jumlah">Jumlah Bayar</label>
-                        <input type="number" name="jumlah" id="jumlah" class="form-control" placeholder="Jumlah bayar"
-                            required>
+                        <p>Sisa Pembayaran - Rp. <?= number_format($sisaBayar) ?></p>
+                        <input type="number" name="jumlah" id="jumlah" class="form-control"
+                            placeholder="Masukkan Jumlah Pembayaran" required>
                     </div>
                     <div class="form-group">
                         <button type="submit" name="bayar" class="btn btn-primary">

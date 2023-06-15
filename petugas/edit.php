@@ -1,37 +1,35 @@
-<?php 
-    if(isset($_GET['act']) && isset($_GET['id']))
-    {
-        $act = $_GET['act'];
-        $id = $_GET['id'];
+<?php
+if (isset($_GET['act']) && isset($_GET['id'])) {
+    $act = $_GET['act'];
+    $id = $_GET['id'];
 
-        if($act == 'kelas'){
-            $data = $db->detailData('kelas', 'id_kelas', $id);
-        } else if($act == 'petugas') {
-            $data = $db->detailData('petugas', 'id_petugas', $id);
-        } else if($act == 'siswa'){
-            $data = $db->detailData('siswa', 'nisn', $id);
-        } else if($act == 'spp'){
-            $data = $db->detailData('spp', 'id_spp', $id);
-        } else if($act == 'pembayaran'){
-            $data = $db->detailData('pembayaran', 'id_pembayaran', $id);
-        } else {
-            die("<br><center>Tidak ada modul yang ditemukan</center>");
-        }
-
-        if(isset($_POST['changePass'])){
-            $pass = $_POST['password'];
-            $pass = MD5($pass);
-    
-            $query = $db->changePass($id, $pass);
-            
-            if($query){
-                $db->alertMsg('Password berhasil diubah', 'index.php?page=siswa');
-            }
-        }
-
+    if ($act == 'kelas') {
+        $data = $db->detailData('kelas', 'id_kelas', $id);
+    } else if ($act == 'petugas') {
+        $data = $db->detailData('petugas', 'id_petugas', $id);
+    } else if ($act == 'siswa') {
+        $data = $db->detailData('siswa', 'nisn', $id);
+    } else if ($act == 'spp') {
+        $data = $db->detailData('spp', 'id_spp', $id);
+    } else if ($act == 'pembayaran') {
+        $data = $db->detailData('pembayaran', 'id_pembayaran', $id);
     } else {
         die("<br><center>Tidak ada modul yang ditemukan</center>");
     }
+
+    if (isset($_POST['changePass'])) {
+        $pass = $_POST['password'];
+        $pass = MD5($pass);
+
+        $query = $db->changePass($act, $id, $pass);
+
+        if ($query) {
+            $db->alertMsg('Password berhasil diubah', 'index.php?page=siswa');
+        }
+    }
+} else {
+    die("<br><center>Tidak ada modul yang ditemukan</center>");
+}
 ?>
 <div class="content-header">
     <div class="container-fluid">
@@ -49,7 +47,7 @@
         <div class="card">
             <div class="card-body">
                 <form action="proses.php?act=<?= $_GET['act'] ?>&id=<?= $_GET['id'] ?>" method="POST">
-                    <?php if($_GET['act'] == 'kelas') : ?>
+                    <?php if ($_GET['act'] == 'kelas') : ?>
                     <div class="form-group">
                         <label for="nama_kelas">Nama Kelas</label>
                         <input type="text" class="form-control" name="nama_kelas" id="nama_kelas"
@@ -61,7 +59,7 @@
                             placeholder="Masukkan kompetensi keahlian" value="<?= $data['kompetensi_keahlian'] ?>"
                             required>
                     </div>
-                    <?php elseif($_GET['act'] == 'petugas') : ?>
+                    <?php elseif ($_GET['act'] == 'petugas') : ?>
                     <input type="hidden" name="oldPassword" value="<?= $data['password'] ?>">
                     <div class="form-group">
                         <label for="nama_petugas">Nama Petugas</label>
@@ -89,7 +87,7 @@
                         <input type="password" class="form-control" name="password" id="password"
                             placeholder="Masukkan password">
                     </div>
-                    <?php elseif($_GET['act'] == 'siswa') : ?>
+                    <?php elseif ($_GET['act'] == 'siswa') : ?>
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
@@ -112,7 +110,7 @@
                                 <label for="kelas">Kelas</label>
                                 <select name="kelas" id="kelas" class="form-control">
                                     <option value="">Pilih Kelas</option>
-                                    <?php foreach($db->showData('kelas', 'nama_kelas') as $val) : ?>
+                                    <?php foreach ($db->showData('kelas', 'nama_kelas') as $val) : ?>
                                     <option <?= ($data['id_kelas'] == $val['id_kelas']) ? 'selected' : '' ?>
                                         value="<?= $val['id_kelas'] ?>"> <?= $val['nama_kelas'] ?></option>
                                     <?php endforeach; ?>
@@ -124,7 +122,7 @@
                                 <label for="spp">Tahun SPP</label>
                                 <select name="spp" id="spp" class="form-control">
                                     <option value="">Pilih SPP</option>
-                                    <?php foreach($db->showData('spp', 'tahun') as $val) : ?>
+                                    <?php foreach ($db->showData('spp', 'tahun') as $val) : ?>
                                     <option <?= ($data['id_spp'] == $val['id_spp']) ? 'selected' : '' ?>
                                         value="<?= $val['id_spp'] ?>"> <?= $val['tahun'] ?></option>
                                     <?php endforeach; ?>
@@ -147,7 +145,7 @@
                         <input type="text" class="form-control" name="notelp" id="notelp"
                             placeholder="Masukkan No. Telp" value="<?= $data['no_telp'] ?>" required>
                     </div>
-                    <?php elseif($_GET['act'] == 'spp') : ?>
+                    <?php elseif ($_GET['act'] == 'spp') : ?>
                     <div class="form-group">
                         <label for="tahun">Tahun</label>
                         <input type="number" class="form-control" name="tahun" id="tahun"
@@ -158,14 +156,14 @@
                         <input type="number" class="form-control" name="nominal" id="nominal"
                             placeholder="Masukkan Nominal" value="<?= $data['nominal'] ?>" required>
                     </div>
-                    <?php elseif($_GET['act'] == 'pembayaran') : ?>
+                    <?php elseif ($_GET['act'] == 'pembayaran') : ?>
                     <div class="form-group">
                         <label for="nama">Siswa</label>
                         <select name="nama" id="nama" class="form-control select2" required>
                             <option value="">Pilih Siswa</option>
-                            <?php foreach($db->showData("siswa", 'nama') as $val): ?>
+                            <?php foreach ($db->showData("siswa", 'nama') as $val) : ?>
                             <option <?= ($val['nisn'] == $data['nisn']) ? 'selected' : '' ?>
-                                value="<?= $val['nisn'] ?>"><?= $val['nisn']." - ".$val['nama'] ?>
+                                value="<?= $val['nisn'] ?>"><?= $val['nisn'] . " - " . $val['nama'] ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -212,7 +210,7 @@
                         <label for="tahun">Tahun SPP</label>
                         <select name="tahun" id="tahun" class="form-control" required>
                             <option value="">Pilih Tahun</option>
-                            <?php foreach($db->showData("spp", 'tahun') as $val): ?>
+                            <?php foreach ($db->showData("spp", 'tahun') as $val) : ?>
                             <option <?= ($data['tahun_dibayar'] == $val['tahun']) ? 'selected' : '' ?>
                                 value="<?= $val['id_spp'] ?>"><?= $val['tahun'] ?>
                             </option>
@@ -231,7 +229,7 @@
                         </button>
                     </div>
                 </form>
-                <?php if($_GET['act'] == 'siswa') : ?>
+                <?php if ($_GET['act'] == 'siswa') : ?>
                 <hr>
                 <h3 class="m-0">Ganti Password</h3>
                 <form action="" method="POST">
