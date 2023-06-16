@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 02 Feb 2023 pada 01.28
--- Versi server: 10.4.25-MariaDB
--- Versi PHP: 8.1.10
+-- Generation Time: Jun 16, 2023 at 04:44 AM
+-- Server version: 10.4.27-MariaDB
+-- PHP Version: 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -23,7 +23,7 @@ SET time_zone = "+00:00";
 
 DELIMITER $$
 --
--- Prosedur
+-- Procedures
 --
 CREATE DEFINER=`root`@`localhost` PROCEDURE `cekLoginPetugas` (`uname` VARCHAR(100), `pass` VARCHAR(100))   BEGIN
 	SELECT * FROM petugas
@@ -49,7 +49,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `tampilData` (IN `tabel` VARCHAR(50)
 END$$
 
 --
--- Fungsi
+-- Functions
 --
 CREATE DEFINER=`root`@`localhost` FUNCTION `PembayaranPetugas` (`uIdPetugas` INT) RETURNS INT(11)  BEGIN
 	RETURN (SELECT COUNT(*)
@@ -62,17 +62,17 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `kelas`
+-- Table structure for table `kelas`
 --
 
 CREATE TABLE `kelas` (
   `id_kelas` int(11) NOT NULL,
   `nama_kelas` varchar(10) NOT NULL,
   `kompetensi_keahlian` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
--- Dumping data untuk tabel `kelas`
+-- Dumping data for table `kelas`
 --
 
 INSERT INTO `kelas` (`id_kelas`, `nama_kelas`, `kompetensi_keahlian`) VALUES
@@ -83,7 +83,7 @@ INSERT INTO `kelas` (`id_kelas`, `nama_kelas`, `kompetensi_keahlian`) VALUES
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `pembayaran`
+-- Table structure for table `pembayaran`
 --
 
 CREATE TABLE `pembayaran` (
@@ -95,32 +95,24 @@ CREATE TABLE `pembayaran` (
   `tahun_dibayar` int(11) NOT NULL,
   `id_spp` int(11) NOT NULL,
   `jumlah_bayar` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
--- Dumping data untuk tabel `pembayaran`
+-- Dumping data for table `pembayaran`
 --
 
 INSERT INTO `pembayaran` (`id_pembayaran`, `id_petugas`, `nisn`, `tgl_bayar`, `bulan_dibayar`, `tahun_dibayar`, `id_spp`, `jumlah_bayar`) VALUES
-(19, 5, '0053503214', '2023-01-28', 'Januari', 2021, 17, 100000),
-(20, 6, '1111', '2023-01-28', 'Januari', 2021, 17, 120000),
-(21, 5, '1111', '2023-01-31', 'Februari', 2021, 17, 100000),
-(23, 5, '1234567891', '2023-01-31', 'Januari', 2021, 17, 100000);
-
---
--- Trigger `pembayaran`
---
-DELIMITER $$
-CREATE TRIGGER `update_total_spp` AFTER INSERT ON `pembayaran` FOR EACH ROW BEGIN
-UPDATE spp SET nominal= nominal+ NEW.jumlah_bayar WHERE id_spp= NEW.id_spp;
-END
-$$
-DELIMITER ;
+(19, 5, '1234567892', '2023-01-28', 'Januari', 2021, 17, 100000),
+(20, 6, '1234567893', '2023-01-28', 'Januari', 2021, 17, 120000),
+(21, 5, '1234567893', '2023-01-31', 'Februari', 2021, 17, 100000),
+(23, 5, '1234567891', '2023-01-31', 'Januari', 2021, 17, 100000),
+(24, 5, '1234567891', '2023-06-15', 'Maret', 2021, 17, 900000),
+(25, 5, '1234567892', '2023-01-28', 'Januari', 2021, 17, 100000);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `petugas`
+-- Table structure for table `petugas`
 --
 
 CREATE TABLE `petugas` (
@@ -129,20 +121,20 @@ CREATE TABLE `petugas` (
   `password` varchar(100) NOT NULL,
   `nama_petugas` varchar(100) NOT NULL,
   `level` enum('admin','petugas') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
--- Dumping data untuk tabel `petugas`
+-- Dumping data for table `petugas`
 --
 
 INSERT INTO `petugas` (`id_petugas`, `username`, `password`, `nama_petugas`, `level`) VALUES
-(5, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Super Admin', 'admin'),
-(6, 'rika', 'e32994c67f9a773e841f9e97bd26f014', 'Rika fitria', 'petugas');
+(5, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Moderator', 'admin'),
+(6, 'herman', 'a1a6907c989946085b0e35493786fce3', 'Hermawan', 'petugas');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `siswa`
+-- Table structure for table `siswa`
 --
 
 CREATE TABLE `siswa` (
@@ -154,19 +146,20 @@ CREATE TABLE `siswa` (
   `password` varchar(255) DEFAULT NULL,
   `alamat` text NOT NULL,
   `no_telp` varchar(13) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
--- Dumping data untuk tabel `siswa`
+-- Dumping data for table `siswa`
 --
 
 INSERT INTO `siswa` (`nisn`, `nis`, `nama`, `id_spp`, `id_kelas`, `password`, `alamat`, `no_telp`) VALUES
-('0053503214', '2010156', 'Hidayat', 17, 9, '1855c11f044cc8944e8cdac9cae5def8', 'Jl. Landak no. 17', '0218081'),
-('1111', '1111', 'Wiwi', 17, 8, 'b59c67bf196a4758191e42f76670ceba', 'dirumah', '0880808'),
-('1234567891', '192001', 'Abdul rahman', 17, 6, '82027888c5bb8fc395411cb6804a066c', 'jl. mandau jaya', '0822233232');
+('1234567891', '2001002', 'Abdul rahman', 17, 6, '0f7e44a922df352c05c5f73cb40ba115', 'jl. mandau jaya', '0822233232'),
+('1234567892', '2001001', 'Hidayat', 18, 9, '1855c11f044cc8944e8cdac9cae5def8', 'Jl. Landak no. 17', '0218081'),
+('1234567893', '2001003', 'Widya', 17, 8, '43042f668f07adfd174cb1823d4795e1', 'dirumah', '0880808'),
+('1234567894', '2001004', 'Mamat', 17, 9, 'a62d7fd579f2791cdbcdcc654b7195f2', 'Jl. Manggis 18', '0824018481');
 
 --
--- Trigger `siswa`
+-- Triggers `siswa`
 --
 DELIMITER $$
 CREATE TRIGGER `create_pass` BEFORE INSERT ON `siswa` FOR EACH ROW BEGIN
@@ -180,34 +173,35 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `spp`
+-- Table structure for table `spp`
 --
 
 CREATE TABLE `spp` (
   `id_spp` int(11) NOT NULL,
   `tahun` int(11) NOT NULL,
   `nominal` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
--- Dumping data untuk tabel `spp`
+-- Dumping data for table `spp`
 --
 
 INSERT INTO `spp` (`id_spp`, `tahun`, `nominal`) VALUES
-(17, 2021, 1120012);
+(17, 2021, 1000000),
+(18, 2022, 1500000);
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indeks untuk tabel `kelas`
+-- Indexes for table `kelas`
 --
 ALTER TABLE `kelas`
   ADD PRIMARY KEY (`id_kelas`);
 
 --
--- Indeks untuk tabel `pembayaran`
+-- Indexes for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
   ADD PRIMARY KEY (`id_pembayaran`),
@@ -216,13 +210,13 @@ ALTER TABLE `pembayaran`
   ADD KEY `nisn` (`nisn`);
 
 --
--- Indeks untuk tabel `petugas`
+-- Indexes for table `petugas`
 --
 ALTER TABLE `petugas`
   ADD PRIMARY KEY (`id_petugas`);
 
 --
--- Indeks untuk tabel `siswa`
+-- Indexes for table `siswa`
 --
 ALTER TABLE `siswa`
   ADD PRIMARY KEY (`nisn`),
@@ -230,45 +224,45 @@ ALTER TABLE `siswa`
   ADD KEY `id_spp` (`id_spp`);
 
 --
--- Indeks untuk tabel `spp`
+-- Indexes for table `spp`
 --
 ALTER TABLE `spp`
   ADD PRIMARY KEY (`id_spp`);
 
 --
--- AUTO_INCREMENT untuk tabel yang dibuang
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT untuk tabel `kelas`
+-- AUTO_INCREMENT for table `kelas`
 --
 ALTER TABLE `kelas`
   MODIFY `id_kelas` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT untuk tabel `pembayaran`
+-- AUTO_INCREMENT for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
-  MODIFY `id_pembayaran` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id_pembayaran` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
--- AUTO_INCREMENT untuk tabel `petugas`
+-- AUTO_INCREMENT for table `petugas`
 --
 ALTER TABLE `petugas`
   MODIFY `id_petugas` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT untuk tabel `spp`
+-- AUTO_INCREMENT for table `spp`
 --
 ALTER TABLE `spp`
-  MODIFY `id_spp` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_spp` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
--- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
+-- Constraints for dumped tables
 --
 
 --
--- Ketidakleluasaan untuk tabel `pembayaran`
+-- Constraints for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
   ADD CONSTRAINT `pembayaran_ibfk_1` FOREIGN KEY (`id_petugas`) REFERENCES `petugas` (`id_petugas`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -276,7 +270,7 @@ ALTER TABLE `pembayaran`
   ADD CONSTRAINT `pembayaran_ibfk_3` FOREIGN KEY (`nisn`) REFERENCES `siswa` (`nisn`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Ketidakleluasaan untuk tabel `siswa`
+-- Constraints for table `siswa`
 --
 ALTER TABLE `siswa`
   ADD CONSTRAINT `siswa_ibfk_1` FOREIGN KEY (`id_spp`) REFERENCES `spp` (`id_spp`) ON DELETE CASCADE ON UPDATE CASCADE,
