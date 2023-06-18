@@ -4,7 +4,8 @@
 Ujian Kompentensi RPL Paket 1, Sistem Pembayaran SPP Digital
 ## Sistem
 
-Sistem dibangun menggunakan PHP berbasis berorentiasi objek dengan menggunakan database MySQL
+Aplikasi manajemen pembayaran spp dengan 3 level pengguna dan sistem CRUD memungkinkan pengguna untuk membuat, membaca, memperbarui, dan menghapus data. Level pengguna terdiri dari Admin, Petugas, dan Siswa. Admin memiliki akses penuh, Petugas memiliki akses terbatas, dan Pengunjung hanya dapat melihat riwayat pembayaran. Aplikasi ini membantu dalam pembayaran spp siswa, membuat jadi lebih efesien, dan pembaruan serta penghapusan yang tepat.
+
 ## Instalasi 
 #### 1. Mengaplikasikan Database
 - Mencari file *SQL* database
